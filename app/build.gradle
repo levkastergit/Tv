@@ -1,0 +1,58 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'ru.russkoetv'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'ru.russkoetv'
+        minSdk 21
+        targetSdk 34
+        // При каждом выпуске обновления увеличивать versionCode на 1
+        versionCode 1
+        versionName '1.0'
+        // Откуда приложение берёт обновления и список каналов
+        buildConfigField 'String', 'UPDATE_SERVER', '"http://82.23.163.205:40100/"'
+    }
+
+    signingConfigs {
+        // Обновление ставится поверх, только если подписано этим же ключом — не терять russkoetv.jks.
+        // Ключ и keystore.properties не хранятся в git: с ними любой мог бы подделать обновление
+        release {
+            def props = new Properties()
+            def file = rootProject.file('keystore.properties')
+            if (file.exists()) {
+                file.withInputStream { props.load(it) }
+                storeFile rootProject.file(props['storeFile'])
+                storePassword props['storePassword']
+                keyAlias props['keyAlias']
+                keyPassword props['keyPassword']
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.release
+        }
+    }
+
+    buildFeatures {
+        buildConfig true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    implementation 'androidx.core:core:1.13.1'
+    implementation 'androidx.media3:media3-exoplayer:1.4.1'
+    implementation 'androidx.media3:media3-exoplayer-hls:1.4.1'
+    implementation 'androidx.media3:media3-ui:1.4.1'
+}

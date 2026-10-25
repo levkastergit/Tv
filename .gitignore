@@ -1,0 +1,12 @@
+# Сборка
+.gradle/
+build/
+app/build/
+local.properties
+
+# Ключ подписи — только локально, с ним можно подделать обновление
+*.jks
+keystore.properties
+
+# Раздаваемые файлы собираются скриптом publish.ps1
+server/

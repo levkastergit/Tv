@@ -1,0 +1,126 @@
+[
+  {
+    "name": "Россия 1",
+    "url": "https://stream.smotrim.ru/hls2/russia_hd/playlist_6.m3u8"
+  },
+  {
+    "name": "НТВ",
+    "url": "https://bl.rutube.ru/livestream/c37cd74192c6bc3d6cd6077c0c4fd686/index.m3u8?e=2077050299&s=HSWg81JrQ3OqmwuWkEIDAQ&scheme=https"
+  },
+  {
+    "name": "Россия К (Культура)",
+    "url": "https://stream.smotrim.ru/hls2/russia_k/playlist_5.m3u8"
+  },
+  {
+    "name": "Звезда",
+    "url": "https://tvzvezda.bonus-tv.ru/cdn/tvzvezda/playlist.m3u8"
+  },
+  {
+    "name": "Мир",
+    "url": "http://hls.mirtv.cdnvideo.ru/mirtv-parampublish/mirtv_2500/playlist.m3u8"
+  },
+  {
+    "name": "Мир 24",
+    "url": "http://hls.mirtv.cdnvideo.ru/mirtv-parampublish/mir24_2500/playlist.m3u8"
+  },
+  {
+    "name": "Москва 24",
+    "url": "https://stream.smotrim.ru/hls/givc8/playlist.m3u8?entity=channel&id=798&sign=37881ef2e289f062ceff0dca6c24dc58"
+  },
+  {
+    "name": "Известия",
+    "url": "https://igi-hls.cdnvideo.ru/igi/igi_tcode/playlist.m3u8"
+  },
+  {
+    "name": "360° Новости",
+    "url": "https://live-vgtrksmotrim.cdnvideo.ru/vgtrksmotrim/smotrim-live-03-srt.smil/playlist.m3u8"
+  },
+  {
+    "name": "Санкт-Петербург",
+    "url": "https://stream.smotrim.ru/hls2/ext_spbtv/playlist_5.m3u8"
+  },
+  {
+    "name": "2x2",
+    "url": "https://bl.rutube.ru/livestream/392b4686b770bae2da6bf5ac4574add5/index.m3u8?e=2068731801&s=tenr-yHXUv1wibfka78s2A&scheme=https"
+  },
+  {
+    "name": "Суббота!",
+    "url": "https://bl.rutube.ru/livestream/310744c10a5809da38aa445c952976da/index.m3u8?e=2066519758&s=dmUf6BUQzDBTwtQOseAfog&scheme=https"
+  },
+  {
+    "name": "Ю",
+    "url": "https://bl.rutube.ru/livestream/5c9327074e25ca86f3111d4085cbbb65/index.m3u8?e=2066519758&s=9cPc1rCGu6M932eqrifRhQ&scheme=https"
+  },
+  {
+    "name": "RU.TV",
+    "url": "https://bl.rutube.ru/livestream/b1eb8e90d7e636677b3eb73b4fcbb717/index.m3u8?e=2069285076&s=d-E-bxKy2v3EEJ94RQX9CA&scheme=https"
+  },
+  {
+    "name": "Звезда Плюс",
+    "url": "https://tvzvezda.bonus-tv.ru/cdn/zvezdaplus/playlist.m3u8"
+  },
+  {
+    "name": "Спас",
+    "url": "https://tvspas.mediacdn.ru/cdn/spas/playlist.m3u8"
+  },
+  {
+    "name": "Союз",
+    "url": "https://hls-tvsoyuz.cdnvideo.ru/tvsoyuz/soyuz/playlist.m3u8"
+  },
+  {
+    "name": "Смотрим: Детское",
+    "url": "https://stream.smotrim.ru/hls/fasttv05/playlist_3.m3u8"
+  },
+  {
+    "name": "Смотрим: Факты",
+    "url": "https://stream.smotrim.ru/hls/fasttv06/playlist_3.m3u8"
+  },
+  {
+    "name": "Смотрим: Классика",
+    "url": "https://stream.smotrim.ru/hls/fasttv03/playlist_3.m3u8"
+  },
+  {
+    "name": "Смотрим: Любовь",
+    "url": "https://stream.smotrim.ru/hls/fasttv01/playlist_2.m3u8"
+  },
+  {
+    "name": "Смотрим: Мужское",
+    "url": "https://stream.smotrim.ru/hls/fasttv02/playlist_3.m3u8"
+  },
+  {
+    "name": "Смотрим: Праздник",
+    "url": "https://stream.smotrim.ru/hls/fasttv04/playlist_3.m3u8"
+  },
+  {
+    "name": "Честный детектив",
+    "url": "https://live-vgtrksmotrim.cdnvideo.ru/vgtrksmotrim/smotrim-live-01.smil/playlist.m3u8"
+  },
+  {
+    "name": "НТВ: Пёс",
+    "url": "https://cdn-dvr.ntv.ru/Pes/index.m3u8"
+  },
+  {
+    "name": "НТВ: Шеф",
+    "url": "https://cdn-dvr.ntv.ru/Shef/index.m3u8"
+  },
+  {
+    "name": "НТВ: Балабол",
+    "url": "https://cdn-dvr.ntv.ru/Balabol/index.m3u8"
+  },
+  {
+    "name": "НТВ: Скорая помощь",
+    "url": "https://cdn-dvr.ntv.ru/Skoraja_pomosh/index.m3u8"
+  },
+  {
+    "name": "НТВ: Первый отдел",
+    "url": "https://cdn-dvr.ntv.ru/Perviy_otdel/index.m3u8"
+  },
+  {
+    "name": "НТВ: Невский",
+    "url": "https://cdn-dvr.ntv.ru/Nevskiy/index.m3u8"
+  },
+  {
+    "name": "НТВ: 5 минут тишины",
+    "url": "https://cdn-dvr.ntv.ru/5_minut_tishiny/index.m3u8"
+  }
+]
