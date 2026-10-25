@@ -12,29 +12,22 @@ final class Channel {
     /** Постоянный код канала — по нему запоминаются порядок и последний канал. */
     final String id;
     final String name;
-    /** Адрес видеопотока. */
+    /** Адрес видеопотока; пустой, если поток берётся с RUTUBE. */
     final String url;
+    /** Видео прямого эфира на RUTUBE (официальный аккаунт канала): адрес потока узнаём перед показом. */
+    final String rutube;
     /** Путь к логотипу: сначала ищется в приложении, потом на сервере обновлений. */
     final String logo;
     /** Код канала в телепрограмме, может отсутствовать. */
     final String epg;
-    /** Если задан — канал без открытого потока, открывается официальная страница с плеером. */
-    final String page;
-    /** CSS-селектор плеера на этой странице — его показываем во весь экран. */
-    final String player;
 
     private Channel(JSONObject json) throws JSONException {
         id = json.getString("id");
         name = json.getString("name");
         url = json.optString("url", "");
+        rutube = json.optString("rutube", null);
         logo = json.optString("logo", null);
         epg = json.isNull("epg") ? null : json.optString("epg", null);
-        page = json.optString("page", null);
-        player = json.optString("player", null);
-    }
-
-    boolean isWebPage() {
-        return page != null && !page.isEmpty();
     }
 
     static List<Channel> parse(String json) throws JSONException {

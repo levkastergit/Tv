@@ -30,11 +30,30 @@
   {
     "id": "STSLove.ru",
     "name": "СТС Love",
-    "url": "",
+    "rutube": "32dc45cf878497abe1c9695e228f039b",
     "logo": "logos/stsloveru.png",
-    "epg": "sts-love",
-    "page": "https://smotrim.ru/channel/259",
-    "player": "iframe.player__vitrina"
+    "epg": "sts-love"
+  },
+  {
+    "id": "TNT.ru",
+    "name": "ТНТ",
+    "rutube": "546602986e6a424d74d594876ddb3f04",
+    "logo": "logos/tntru.png",
+    "epg": "tnt"
+  },
+  {
+    "id": "TNT4.ru",
+    "name": "ТНТ4",
+    "rutube": "d72234353cf2e311006751e355fbc245",
+    "logo": "logos/tnt4ru.png",
+    "epg": "tnt4"
+  },
+  {
+    "id": "TV3.ru",
+    "name": "ТВ-3",
+    "rutube": "7bf12d9c050f9a7ef3728db5730432ae",
+    "logo": "logos/tv3ru.png",
+    "epg": "tv3-ru"
   },
   {
     "id": "NTV.ru",
@@ -42,6 +61,13 @@
     "url": "https://bl.rutube.ru/livestream/c37cd74192c6bc3d6cd6077c0c4fd686/index.m3u8?e=2077050299&s=HSWg81JrQ3OqmwuWkEIDAQ&scheme=https",
     "logo": "logos/ntvru.png",
     "epg": "ntv"
+  },
+  {
+    "id": "RENTV.ru",
+    "name": "РЕН ТВ",
+    "rutube": "67938d3536450ae8d10f12acee7ffde6",
+    "logo": "logos/rentvru.png",
+    "epg": "rentv"
   },
   {
     "id": "RussiaK.ru",
@@ -126,6 +152,13 @@
     "url": "https://bl.rutube.ru/livestream/5c9327074e25ca86f3111d4085cbbb65/index.m3u8?e=2066519758&s=9cPc1rCGu6M932eqrifRhQ&scheme=https",
     "logo": "logos/uru.png",
     "epg": "yu"
+  },
+  {
+    "id": "Che.ru",
+    "name": "Че",
+    "rutube": "5bbff90167d1b1d88fda92376ec7a651",
+    "logo": "logos/cheru.png",
+    "epg": "che"
   },
   {
     "id": "RUTV.ru",

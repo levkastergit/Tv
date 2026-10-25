@@ -22,8 +22,10 @@ import androidx.media3.common.MediaItem;
 import androidx.media3.common.PlaybackException;
 import androidx.media3.common.Player;
 import androidx.media3.datasource.DefaultHttpDataSource;
+import androidx.media3.exoplayer.DefaultLoadControl;
 import androidx.media3.exoplayer.ExoPlayer;
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory;
+import androidx.media3.exoplayer.trackselection.DefaultTrackSelector;
 import androidx.media3.ui.PlayerView;
 
 import org.json.JSONArray;
@@ -41,7 +43,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -62,6 +66,10 @@ public class MainActivity extends Activity {
 
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final ExecutorService io = Executors.newSingleThreadExecutor();
+    /** Отдельный поток для ссылок RUTUBE — чтобы переключение канала не ждало загрузку программы. */
+    private final ExecutorService resolver = Executors.newSingleThreadExecutor();
+    /** Уже полученные ссылки на эфиры RUTUBE: видео → поток. */
+    private final Map<String, String> rutubeStreams = new HashMap<>();
 
     private ExoPlayer player;
     private View panel;
@@ -145,8 +153,16 @@ public class MainActivity extends Activity {
                 .setAllowCrossProtocolRedirects(true)
                 .setConnectTimeoutMs(15000)
                 .setReadTimeoutMs(15000);
+        // Всегда самое высокое качество, которое тянет телевизор, и быстрый старт: играем, набрав 1 секунду
+        DefaultTrackSelector tracks = new DefaultTrackSelector(this);
+        tracks.setParameters(tracks.buildUponParameters().setForceHighestSupportedBitrate(true));
+        DefaultLoadControl loading = new DefaultLoadControl.Builder()
+                .setBufferDurationsMs(15000, 50000, 1000, 2000)
+                .build();
         player = new ExoPlayer.Builder(this)
                 .setMediaSourceFactory(new DefaultMediaSourceFactory(this).setDataSourceFactory(http))
+                .setTrackSelector(tracks)
+                .setLoadControl(loading)
                 .build();
         player.addListener(new Player.Listener() {
             @Override
@@ -165,7 +181,12 @@ public class MainActivity extends Activity {
                     player.prepare();
                     return;
                 }
-                Log.w(TAG, "Не воспроизводится " + channels.get(current).name, error);
+                Channel failed = channels.get(current);
+                Log.w(TAG, "Не воспроизводится " + failed.name, error);
+                if (failed.rutube != null) {
+                    // Ссылка могла устареть — в следующий раз спросим RUTUBE заново
+                    rutubeStreams.remove(failed.rutube);
+                }
                 showInfo(channelTitle(current) + "\nКанал сейчас недоступен. Выберите другой.", 0);
             }
         });
@@ -173,8 +194,8 @@ public class MainActivity extends Activity {
         playerView.setPlayer(player);
 
         current = indexOfId(prefs.getString(CURRENT_CHANNEL, null));
-        if (current < 0 || channels.get(current).isWebPage()) {
-            current = nextPlayable(-1, 1);
+        if (current < 0) {
+            current = 0;
         }
         loadCachedEpg();
         showList();
@@ -219,6 +240,7 @@ public class MainActivity extends Activity {
         super.onDestroy();
         handler.removeCallbacksAndMessages(null);
         io.shutdownNow();
+        resolver.shutdownNow();
         logos.shutdown();
         player.release();
     }
@@ -254,11 +276,11 @@ public class MainActivity extends Activity {
             return true;
         }
         if (key == KeyEvent.KEYCODE_CHANNEL_UP) {
-            play(nextPlayable(current, 1));
+            play(neighbour(1));
             return true;
         }
         if (key == KeyEvent.KEYCODE_CHANNEL_DOWN) {
-            play(nextPlayable(current, -1));
+            play(neighbour(-1));
             return true;
         }
 
@@ -273,10 +295,10 @@ public class MainActivity extends Activity {
 
         switch (key) {
             case KeyEvent.KEYCODE_DPAD_UP:
-                play(nextPlayable(current, -1));
+                play(neighbour(-1));
                 return true;
             case KeyEvent.KEYCODE_DPAD_DOWN:
-                play(nextPlayable(current, 1));
+                play(neighbour(1));
                 return true;
             case KeyEvent.KEYCODE_BACK:
             case KeyEvent.KEYCODE_DPAD_CENTER:
@@ -292,13 +314,6 @@ public class MainActivity extends Activity {
 
     private void play(int index) {
         Channel channel = channels.get(index);
-        if (channel.isWebPage()) {
-            // Открытого потока нет — показываем официальную страницу канала, текущий канал не меняем
-            startActivity(new Intent(this, WebActivity.class)
-                    .putExtra(WebActivity.EXTRA_URL, channel.page)
-                    .putExtra(WebActivity.EXTRA_PLAYER, channel.player));
-            return;
-        }
         current = index;
         prefs.edit().putString(CURRENT_CHANNEL, channel.id).apply();
         list.setItemChecked(current, true);
@@ -306,23 +321,62 @@ public class MainActivity extends Activity {
             list.setSelection(current);
         }
 
-        player.setMediaItem(MediaItem.fromUri(channel.url));
-        player.prepare();
-        player.play();
         showChannelInfo();
+
+        String known = channel.rutube == null ? channel.url : rutubeStreams.get(channel.rutube);
+        if (known != null) {
+            start(known);
+            return;
+        }
+        // Адрес эфира на RUTUBE узнаём у его открытого API — так же, как официальный плеер на сайте канала
+        player.stop();
+        player.clearMediaItems();
+        resolver.execute(() -> {
+            String stream = resolveRutube(channel.rutube);
+            runOnUiThread(() -> {
+                if (isFinishing() || !channels.get(current).id.equals(channel.id)) {
+                    return;
+                }
+                if (stream == null) {
+                    showInfo(channelTitle(current) + "\nКанал сейчас недоступен. Выберите другой.", 0);
+                    return;
+                }
+                rutubeStreams.put(channel.rutube, stream);
+                start(stream);
+            });
+        });
     }
 
-    /** Следующий канал с видеопотоком в направлении step; страницы при листании пропускаем. */
-    private int nextPlayable(int from, int step) {
-        int count = channels.size();
-        int index = from;
-        for (int i = 0; i < count; i++) {
-            index = ((index + step) % count + count) % count;
-            if (!channels.get(index).isWebPage()) {
-                return index;
-            }
+    private void start(String url) {
+        player.setMediaItem(MediaItem.fromUri(url));
+        player.prepare();
+        player.play();
+    }
+
+    /** Ссылка на прямой эфир видео RUTUBE или null, если RUTUBE его не отдал (например, вне России). */
+    private static String resolveRutube(String videoId) {
+        String json = fetchOrNull("https://rutube.ru/api/play/options/" + videoId + "/?no_404=true");
+        if (json == null) {
+            return null;
         }
-        return Math.max(from, 0);
+        try {
+            JSONObject live = new JSONObject(json).optJSONObject("live_streams");
+            JSONArray hls = live == null ? null : live.optJSONArray("hls");
+            if (hls == null || hls.length() == 0) {
+                Log.w(TAG, "RUTUBE не отдал эфир " + videoId + ": " + json);
+                return null;
+            }
+            return hls.getJSONObject(0).getString("url");
+        } catch (JSONException e) {
+            Log.w(TAG, "Непонятный ответ RUTUBE для " + videoId, e);
+            return null;
+        }
+    }
+
+    /** Соседний канал по кругу. */
+    private int neighbour(int step) {
+        int count = channels.size();
+        return ((current + step) % count + count) % count;
     }
 
     private void showChannelInfo() {
@@ -457,15 +511,16 @@ public class MainActivity extends Activity {
         adapter.setChannels(channels);
 
         int index = indexOfId(playing.id);
-        if (index >= 0 && !channels.get(index).isWebPage()) {
+        if (index >= 0) {
             current = index;
             list.setItemChecked(current, true);
-            if (!channels.get(index).url.equals(playing.url)) {
+            Channel updated = channels.get(index);
+            if (!updated.url.equals(playing.url) || !String.valueOf(updated.rutube).equals(String.valueOf(playing.rutube))) {
                 // Адрес канала поменяли (например, починили) — переключаемся на новый
                 play(index);
             }
         } else {
-            play(nextPlayable(-1, 1));
+            play(0);
         }
     }
 
