@@ -1,126 +1,438 @@
 [
   {
+    "id": "Russia1.ru",
     "name": "Россия 1",
-    "url": "https://stream.smotrim.ru/hls2/russia_hd/playlist_6.m3u8"
+    "url": "https://live.smotrim.ru/vgtrk/0/russia1-hd/index.m3u8",
+    "logo": "logos/russia1ru.png",
+    "epg": "rossia1"
   },
   {
+    "id": "Russia1Vologda.ru",
+    "name": "Россия 1 (Вологда)",
+    "url": "https://live-gtrk.smotrim.ru/vgtrk/vologda/russia1-sd/index.m3u8",
+    "logo": "logos/russia1ru.png",
+    "epg": "rossia1"
+  },
+  {
+    "id": "Russia24.ru",
+    "name": "Россия 24",
+    "url": "https://live.smotrim.ru/vgtrk/0/russia24-hd/index.m3u8",
+    "logo": "logos/russia24ru.png",
+    "epg": "rossia-24"
+  },
+  {
+    "id": "Russia24Vologda.ru",
+    "name": "Россия 24 (Вологда)",
+    "url": "https://live-gtrk.smotrim.ru/vgtrk/vologda/russia24-sd/index.m3u8",
+    "logo": "logos/russia24ru.png",
+    "epg": "rossia-24"
+  },
+  {
+    "id": "STSLove.ru",
+    "name": "СТС Love",
+    "url": "",
+    "logo": "logos/stsloveru.png",
+    "epg": "sts-love",
+    "page": "https://smotrim.ru/channel/259",
+    "player": "iframe.player__vitrina"
+  },
+  {
+    "id": "NTV.ru",
     "name": "НТВ",
-    "url": "https://bl.rutube.ru/livestream/c37cd74192c6bc3d6cd6077c0c4fd686/index.m3u8?e=2077050299&s=HSWg81JrQ3OqmwuWkEIDAQ&scheme=https"
+    "url": "https://bl.rutube.ru/livestream/c37cd74192c6bc3d6cd6077c0c4fd686/index.m3u8?e=2077050299&s=HSWg81JrQ3OqmwuWkEIDAQ&scheme=https",
+    "logo": "logos/ntvru.png",
+    "epg": "ntv"
   },
   {
+    "id": "RussiaK.ru",
     "name": "Россия К (Культура)",
-    "url": "https://stream.smotrim.ru/hls2/russia_k/playlist_5.m3u8"
+    "url": "https://live.smotrim.ru/vgtrk/0/kultura-hd/index.m3u8",
+    "logo": "logos/russiakru.png",
+    "epg": "kultura"
   },
   {
+    "id": "Zvezda.ru",
     "name": "Звезда",
-    "url": "https://tvzvezda.bonus-tv.ru/cdn/tvzvezda/playlist.m3u8"
+    "url": "https://tvzvezda.bonus-tv.ru/cdn/tvzvezda/playlist.m3u8",
+    "logo": "logos/zvezdaru.png",
+    "epg": "zvezda"
   },
   {
+    "id": "Mir.ru",
     "name": "Мир",
-    "url": "http://hls.mirtv.cdnvideo.ru/mirtv-parampublish/mirtv_2500/playlist.m3u8"
+    "url": "http://hls.mirtv.cdnvideo.ru/mirtv-parampublish/mirtv_2500/playlist.m3u8",
+    "logo": "logos/mirru.png",
+    "epg": "mir"
   },
   {
+    "id": "Mir24.ru",
     "name": "Мир 24",
-    "url": "http://hls.mirtv.cdnvideo.ru/mirtv-parampublish/mir24_2500/playlist.m3u8"
+    "url": "http://hls.mirtv.cdnvideo.ru/mirtv-parampublish/mir24_2500/playlist.m3u8",
+    "logo": "logos/mir24ru.png",
+    "epg": "mir-24"
   },
   {
+    "id": "Moskva24.ru",
     "name": "Москва 24",
-    "url": "https://stream.smotrim.ru/hls/givc8/playlist.m3u8?entity=channel&id=798&sign=37881ef2e289f062ceff0dca6c24dc58"
+    "url": "https://stream.smotrim.ru/hls/givc8/playlist.m3u8?entity=channel&id=798&sign=37881ef2e289f062ceff0dca6c24dc58",
+    "logo": "logos/moskva24ru.png",
+    "epg": "moskva-24"
   },
   {
+    "id": "Izvestia.ru",
     "name": "Известия",
-    "url": "https://igi-hls.cdnvideo.ru/igi/igi_tcode/playlist.m3u8"
+    "url": "http://igi-hls.cdnvideo.ru/igi/igi_tcode/playlist.m3u8",
+    "logo": "logos/izvestiaru.png",
+    "epg": "izvestia"
   },
   {
+    "id": "360.ru",
+    "name": "360°",
+    "url": "https://cdn-evacoder-tv.facecast.io/evacoder_hls_hi/CkxfR1xNUAJwTgtXTBZTAJli/index.m3u8",
+    "logo": "logos/360ru.png",
+    "epg": "360-podmoskovie"
+  },
+  {
+    "id": "360News.ru",
     "name": "360° Новости",
-    "url": "https://live-vgtrksmotrim.cdnvideo.ru/vgtrksmotrim/smotrim-live-03-srt.smil/playlist.m3u8"
+    "url": "https://live-vgtrksmotrim.cdnvideo.ru/vgtrksmotrim/smotrim-live-03-srt.smil/playlist.m3u8",
+    "logo": "logos/360newsru.png",
+    "epg": "360-news"
   },
   {
+    "id": "SanktPeterburg.ru",
     "name": "Санкт-Петербург",
-    "url": "https://stream.smotrim.ru/hls2/ext_spbtv/playlist_5.m3u8"
+    "url": "https://stream.smotrim.ru/hls2/ext_spbtv/playlist_5.m3u8",
+    "logo": "logos/sanktpeterburgru.png",
+    "epg": "sankt-peterburg"
   },
   {
+    "id": "2x2.ru",
     "name": "2x2",
-    "url": "https://bl.rutube.ru/livestream/392b4686b770bae2da6bf5ac4574add5/index.m3u8?e=2068731801&s=tenr-yHXUv1wibfka78s2A&scheme=https"
+    "url": "https://bl.rutube.ru/livestream/392b4686b770bae2da6bf5ac4574add5/index.m3u8?e=2068731801&s=tenr-yHXUv1wibfka78s2A&scheme=https",
+    "logo": "logos/2x2ru.png",
+    "epg": "2na2"
   },
   {
+    "id": "Subbota.ru",
     "name": "Суббота!",
-    "url": "https://bl.rutube.ru/livestream/310744c10a5809da38aa445c952976da/index.m3u8?e=2066519758&s=dmUf6BUQzDBTwtQOseAfog&scheme=https"
+    "url": "https://bl.rutube.ru/livestream/310744c10a5809da38aa445c952976da/index.m3u8?e=2066519758&s=dmUf6BUQzDBTwtQOseAfog&scheme=https",
+    "logo": "logos/subbotaru.png",
+    "epg": "super"
   },
   {
+    "id": "U.ru",
     "name": "Ю",
-    "url": "https://bl.rutube.ru/livestream/5c9327074e25ca86f3111d4085cbbb65/index.m3u8?e=2066519758&s=9cPc1rCGu6M932eqrifRhQ&scheme=https"
+    "url": "https://bl.rutube.ru/livestream/5c9327074e25ca86f3111d4085cbbb65/index.m3u8?e=2066519758&s=9cPc1rCGu6M932eqrifRhQ&scheme=https",
+    "logo": "logos/uru.png",
+    "epg": "yu"
   },
   {
+    "id": "RUTV.ru",
     "name": "RU.TV",
-    "url": "https://bl.rutube.ru/livestream/b1eb8e90d7e636677b3eb73b4fcbb717/index.m3u8?e=2069285076&s=d-E-bxKy2v3EEJ94RQX9CA&scheme=https"
+    "url": "https://bl.rutube.ru/livestream/b1eb8e90d7e636677b3eb73b4fcbb717/index.m3u8?e=2069285076&s=d-E-bxKy2v3EEJ94RQX9CA&scheme=https",
+    "logo": "logos/rutvru.png",
+    "epg": "ru-tv"
   },
   {
+    "id": "MuzSoyuz.ru",
+    "name": "Муз Союз",
+    "url": "https://hls-tvsoyuz.cdnvideo.ru/tvsoyuz2/muzsoyuz.6fw0-58xp-acts-esy0/playlist.m3u8",
+    "logo": "logos/muzsoyuzru.png",
+    "epg": null
+  },
+  {
+    "id": "HorosheeKino.ru",
+    "name": "Хорошее кино",
+    "url": "https://live-rian.cdnvideo.ru/rian/rus-radio/playlist.m3u8",
+    "logo": "logos/horosheekinoru.png",
+    "epg": null
+  },
+  {
+    "id": "ZvezdaPlus.ru",
     "name": "Звезда Плюс",
-    "url": "https://tvzvezda.bonus-tv.ru/cdn/zvezdaplus/playlist.m3u8"
+    "url": "http://tvzvezda.bonus-tv.ru/cdn/zvezdaplus/playlist.m3u8",
+    "logo": "logos/zvezdaplusru.png",
+    "epg": "zvezda-plus"
   },
   {
+    "id": "RTDocumentary.ru",
+    "name": "RT Документальный",
+    "url": "https://rt-doc.rttv.com/dvr/rtdru/playlist.m3u8",
+    "logo": "logos/rtdocumentaryru.png",
+    "epg": "rtd-ru"
+  },
+  {
+    "id": "Prosveshchenie.ru",
+    "name": "Просвещение",
+    "url": "http://cdn-01.bonus-tv.ru/prosveschenie_edge/index.m3u8",
+    "logo": "logos/prosveshchenieru.png",
+    "epg": "prosveschenie"
+  },
+  {
+    "id": "Ministerstvoidey.ru",
+    "name": "Министерство идей",
+    "url": "https://live-minidey.cdnvideo.ru/minidey-srt/minidey/playlist.m3u8",
+    "logo": "logos/ministerstvoideyru.png",
+    "epg": "ministerstvo-idey"
+  },
+  {
+    "id": "UniverTV.ru",
+    "name": "Univer TV",
+    "url": "https://cdn.universmotri.ru/live/smil:univer.smil/playlist.m3u8",
+    "logo": "logos/univertvru.png",
+    "epg": "univer-tv"
+  },
+  {
+    "id": "TsargradTV.ru",
+    "name": "Царьград",
+    "url": "https://bl.rutube.ru/livestream/91815da4edb167b5bd617bae490e57da/index.m3u8?e=2070278263&s=is_mLq_kjPYLsOJ4qj85tw&scheme=https",
+    "logo": "logos/tsargradtvru.png",
+    "epg": null
+  },
+  {
+    "id": "Spas.ru",
     "name": "Спас",
-    "url": "https://tvspas.mediacdn.ru/cdn/spas/playlist.m3u8"
+    "url": "https://tvspas.mediacdn.ru/cdn/spas/playlist.m3u8",
+    "logo": "logos/spasru.png",
+    "epg": "spas"
   },
   {
+    "id": "Soyuz.ru",
     "name": "Союз",
-    "url": "https://hls-tvsoyuz.cdnvideo.ru/tvsoyuz/soyuz/playlist.m3u8"
+    "url": "https://hls-tvsoyuz.cdnvideo.ru/tvsoyuz/soyuz/playlist.m3u8",
+    "logo": "logos/soyuzru.png",
+    "epg": "soyuz"
   },
   {
+    "id": "Soyuzny.ru",
+    "name": "Союзное ТВ",
+    "url": "https://souzny.mediacdn.ru/cdn/souzny/playlist.m3u8",
+    "logo": "logos/soyuznyru.png",
+    "epg": "tro"
+  },
+  {
+    "id": "VmesteRF.ru",
+    "name": "Вместе-РФ",
+    "url": "https://qcpdqumitwf.a.trbcdn.net/livemastersrt/pr4mw_lvie-vmesterf-srt.smil/playlist.m3u8",
+    "logo": "logos/vmesterfru.png",
+    "epg": "vmeste-rf"
+  },
+  {
+    "id": "Smotrim100Detskoe.ru",
     "name": "Смотрим: Детское",
-    "url": "https://stream.smotrim.ru/hls/fasttv05/playlist_3.m3u8"
+    "url": "https://stream.smotrim.ru/hls/fasttv05/playlist_3.m3u8",
+    "logo": "logos/smotrim100detskoeru.png",
+    "epg": "smotrim-100-detskoe"
   },
   {
+    "id": "Smotrim100Fakty.ru",
     "name": "Смотрим: Факты",
-    "url": "https://stream.smotrim.ru/hls/fasttv06/playlist_3.m3u8"
+    "url": "https://stream.smotrim.ru/hls/fasttv06/playlist_3.m3u8",
+    "logo": "logos/smotrim100faktyru.png",
+    "epg": "smotrim-100-fakty"
   },
   {
+    "id": "Smotrim100Klassika.ru",
     "name": "Смотрим: Классика",
-    "url": "https://stream.smotrim.ru/hls/fasttv03/playlist_3.m3u8"
+    "url": "https://stream.smotrim.ru/hls/fasttv03/playlist_3.m3u8",
+    "logo": "logos/smotrim100klassikaru.png",
+    "epg": "smotrim-100-klassika"
   },
   {
+    "id": "Smotrim100Lyubov.ru",
     "name": "Смотрим: Любовь",
-    "url": "https://stream.smotrim.ru/hls/fasttv01/playlist_2.m3u8"
+    "url": "https://stream.smotrim.ru/hls/fasttv01/playlist_2.m3u8",
+    "logo": "logos/smotrim100lyubovru.png",
+    "epg": "smotrim-100-lubov"
   },
   {
+    "id": "Smotrim100Muzhskoe.ru",
     "name": "Смотрим: Мужское",
-    "url": "https://stream.smotrim.ru/hls/fasttv02/playlist_3.m3u8"
+    "url": "https://stream.smotrim.ru/hls/fasttv02/playlist_3.m3u8",
+    "logo": "logos/smotrim100muzhskoeru.png",
+    "epg": "smotrim-100-muzhskoe"
   },
   {
+    "id": "Smotrim100Prazdnik.ru",
     "name": "Смотрим: Праздник",
-    "url": "https://stream.smotrim.ru/hls/fasttv04/playlist_3.m3u8"
+    "url": "https://stream.smotrim.ru/hls/fasttv04/playlist_3.m3u8",
+    "logo": "logos/smotrim100prazdnikru.png",
+    "epg": "smotrim-100-prazdnik"
   },
   {
+    "id": "SmotrimChestnyyDetektiv.ru",
     "name": "Честный детектив",
-    "url": "https://live-vgtrksmotrim.cdnvideo.ru/vgtrksmotrim/smotrim-live-01.smil/playlist.m3u8"
+    "url": "https://live-vgtrksmotrim.cdnvideo.ru/vgtrksmotrim/smotrim-live-01.smil/playlist.m3u8",
+    "logo": "logos/smotrimchestnyydetektivru.png",
+    "epg": "chestny-detektiv"
   },
   {
+    "id": "Pes.ru",
     "name": "НТВ: Пёс",
-    "url": "https://cdn-dvr.ntv.ru/Pes/index.m3u8"
+    "url": "https://cdn-dvr.ntv.ru/Pes/index.m3u8",
+    "logo": "logos/pesru.png",
+    "epg": null
   },
   {
+    "id": "Shef.ru",
     "name": "НТВ: Шеф",
-    "url": "https://cdn-dvr.ntv.ru/Shef/index.m3u8"
+    "url": "https://cdn-dvr.ntv.ru/Shef/index.m3u8",
+    "logo": "logos/shefru.png",
+    "epg": null
   },
   {
+    "id": "Balabol.ru",
     "name": "НТВ: Балабол",
-    "url": "https://cdn-dvr.ntv.ru/Balabol/index.m3u8"
+    "url": "https://cdn-dvr.ntv.ru/Balabol/index.m3u8",
+    "logo": "logos/balabolru.png",
+    "epg": null
   },
   {
+    "id": "Skorayapomoshch.ru",
     "name": "НТВ: Скорая помощь",
-    "url": "https://cdn-dvr.ntv.ru/Skoraja_pomosh/index.m3u8"
+    "url": "https://cdn-dvr.ntv.ru/Skoraja_pomosh/index.m3u8",
+    "logo": "logos/skorayapomoshchru.png",
+    "epg": null
   },
   {
+    "id": "Perviyotdel.ru",
     "name": "НТВ: Первый отдел",
-    "url": "https://cdn-dvr.ntv.ru/Perviy_otdel/index.m3u8"
+    "url": "https://cdn-dvr.ntv.ru/Perviy_otdel/index.m3u8",
+    "logo": "logos/perviyotdelru.png",
+    "epg": null
   },
   {
+    "id": "Nevskiy.ru",
     "name": "НТВ: Невский",
-    "url": "https://cdn-dvr.ntv.ru/Nevskiy/index.m3u8"
+    "url": "https://cdn-dvr.ntv.ru/Nevskiy/index.m3u8",
+    "logo": "logos/nevskiyru.png",
+    "epg": null
   },
   {
+    "id": "5minuttishiny.ru",
     "name": "НТВ: 5 минут тишины",
-    "url": "https://cdn-dvr.ntv.ru/5_minut_tishiny/index.m3u8"
+    "url": "https://cdn-dvr.ntv.ru/5_minut_tishiny/index.m3u8",
+    "logo": "logos/5minuttishinyru.png",
+    "epg": null
+  },
+  {
+    "id": "MoskvaDoveriye.ru",
+    "name": "Москва. Доверие",
+    "url": "https://stream.smotrim.ru/hls2/doverie/playlist_3.m3u8",
+    "logo": "logos/moskvadoveriyeru.png",
+    "epg": "doverie"
+  },
+  {
+    "id": "LenTV24.ru",
+    "name": "ЛенТВ 24",
+    "url": "https://stream.smotrim.ru/hls/lentv24/playlist.m3u8?entity=channel&id=275&sign=2b38bf6446fb73e2168144c12a7a3d13",
+    "logo": "logos/lentv24ru.png",
+    "epg": "lot-47"
+  },
+  {
+    "id": "TNVTatarstan.ru",
+    "name": "ТНВ-Татарстан",
+    "url": "https://user91229.clients-cdnnow.ru/hls/user91229_1.m3u8",
+    "logo": "logos/tnvtatarstanru.png",
+    "epg": "tnv"
+  },
+  {
+    "id": "UgraTV.ru",
+    "name": "Югра",
+    "url": "https://live-ugratv.cdnvideo.ru/ugratv/ugratv/playlist.m3u8",
+    "logo": "logos/ugratvru.png",
+    "epg": "yugra"
+  },
+  {
+    "id": "GuberniaSamara.ru",
+    "name": "Губерния (Самара)",
+    "url": "http://live.guberniatv.cdnvideo.ru/guberniatv/guberniatv.sdp/playlist.m3u8",
+    "logo": "logos/guberniasamararu.png",
+    "epg": "gubernia"
+  },
+  {
+    "id": "TelekanalKrasnodar.ru",
+    "name": "Краснодар",
+    "url": "https://live-tvkrasnodar.cdnvideo.ru/tvkrasnodar/tvkrasnodar.sdp/playlist.m3u8",
+    "logo": "logos/telekanalkrasnodarru.png",
+    "epg": "krasnodar"
+  },
+  {
+    "id": "Kuban24.ru",
+    "name": "Кубань 24",
+    "url": "https://rt-sth-krdar-htlive.cdn.ngenix.net/hls/CH_R04_KUBAN24/variant.m3u8",
+    "logo": "logos/kuban24ru.png",
+    "epg": "kuban-24"
+  },
+  {
+    "id": "Dagestan.ru",
+    "name": "Дагестан",
+    "url": "https://dagestan.mediacdn.ru/cdn/dagestan/playlist.m3u8",
+    "logo": "logos/dagestanru.png",
+    "epg": "rgvk-dagestan"
+  },
+  {
+    "id": "Sochi24.ru",
+    "name": "Сочи 24",
+    "url": "http://serv30.vintera.tv:8081/sochi/sochi24_tv/playlist.m3u8",
+    "logo": "logos/sochi24ru.png",
+    "epg": "sochi24"
+  },
+  {
+    "id": "YaPervyy.ru",
+    "name": "Первый Ярославский",
+    "url": "https://yaroslavl.mediacdn.ru/cdn/pervyaroslavsk/playlist.m3u8",
+    "logo": "logos/yapervyyru.png",
+    "epg": "pervy-yaroslavsky"
+  },
+  {
+    "id": "Channel8Novosibirsk.ru",
+    "name": "8 канал (Новосибирск)",
+    "url": "https://live-8knsk.cdnvideo.ru/8knsk/stream1/playlist.m3u8",
+    "logo": "logos/channel8novosibirskru.png",
+    "epg": "8kanal-ru"
+  },
+  {
+    "id": "Channel12.ru",
+    "name": "12 канал (Омск)",
+    "url": "https://12channel.bonus-tv.ru/cdn/12channel/playlist.m3u8",
+    "logo": "logos/channel12ru.png",
+    "epg": "12-omsk"
+  },
+  {
+    "id": "AISTTV.ru",
+    "name": "АИСТ (Иркутск)",
+    "url": "http://live2-aisttv.cdnvideo.ru/aisttv2/aisttv.sdp/playlist.m3u8",
+    "logo": "logos/aisttvru.png",
+    "epg": "aist"
+  },
+  {
+    "id": "NVKSakha.ru",
+    "name": "НВК Саха",
+    "url": "https://live-saha.cdnvideo.ru/saha/saha/playlist.m3u8",
+    "logo": "logos/nvksakharu.png",
+    "epg": "saxa"
+  },
+  {
+    "id": "Volga.ru",
+    "name": "Волга",
+    "url": "http://tele2dvrnat01-02.cdnvideo.ru/stream/NAT_Volga/hls/1920x1080@4504/playlist.m3u8",
+    "logo": "logos/volgaru.png",
+    "epg": "volga"
+  },
+  {
+    "id": "OTVPrim.ru",
+    "name": "ОТВ-Прим",
+    "url": "https://jz2lo90hnpy.a.trbcdn.net/livemaster/yo8gr_live-5gorrrfpouq.smil/playlist.m3u8",
+    "logo": "logos/otvprimru.png",
+    "epg": "otv-primorie"
+  },
+  {
+    "id": "SvoyoTV.ru",
+    "name": "Своё ТВ (Ставрополь)",
+    "url": "https://svoetv.mediacdn.ru/cdn/svoetv/playlist.m3u8",
+    "logo": "logos/svoyotvru.png",
+    "epg": "svoyo-tv-stavropol"
   }
 ]

@@ -7,6 +7,8 @@ $meta = (Get-Content "$build\output-metadata.json" -Raw | ConvertFrom-Json).elem
 New-Item -ItemType Directory -Force "$root\server" | Out-Null
 Copy-Item "$build\app-release.apk" "$root\server\tv.apk"
 Copy-Item "$root\app\src\main\assets\channels.json" "$root\server\channels.json"
+# Логотипы — для каналов, добавленных на сервер после выхода версии
+Copy-Item -Recurse -Force "$root\app\src\main\assets\logos" "$root\server\"
 @{ versionCode = $meta.versionCode; versionName = $meta.versionName; apk = "tv.apk" } |
     ConvertTo-Json | Out-File -Encoding ascii "$root\server\version.json"
 

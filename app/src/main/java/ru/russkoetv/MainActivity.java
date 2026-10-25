@@ -14,7 +14,6 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -41,6 +40,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -52,8 +52,13 @@ public class MainActivity extends Activity {
             "Mozilla/5.0 (Linux; Android 12; Android TV) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36";
     private static final String SERVER = BuildConfig.UPDATE_SERVER;
     private static final String CHANNELS_FILE = "channels.json";
+    private static final String EPG_FILE = "epg.json";
+    private static final long EPG_REFRESH_MS = 30 * 60 * 1000;
     /** Отмечаем перед запросом разрешения: Android закрывает приложение, когда его выдают. */
     private static final String UPDATE_AFTER_PERMISSION = "update_after_permission";
+    /** Порядок каналов, выбранный пользователем: список id. */
+    private static final String ORDER = "order";
+    private static final String CURRENT_CHANNEL = "channel_id";
 
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final ExecutorService io = Executors.newSingleThreadExecutor();
@@ -62,28 +67,50 @@ public class MainActivity extends Activity {
     private View panel;
     private ListView list;
     private TextView info;
-    private ArrayAdapter<String> adapter;
+    private TextView hint;
+    private ChannelAdapter adapter;
+    private LogoLoader logos;
     private SharedPreferences prefs;
 
-    /** Каналы: { название, адрес трансляции }. */
-    private String[][] channels;
+    /** Каналы в порядке, выбранном пользователем. */
+    private List<Channel> channels;
     /** Текст списка каналов, из которого загружен channels, — чтобы не применять одно и то же дважды. */
     private String channelsJson;
+    private Epg epg = Epg.EMPTY;
 
+    /** Канал, который сейчас показывается (всегда с видеопотоком, не страница). */
     private int current;
     /** На экране название канала — его убираем, когда канал загрузился. */
     private boolean titleShown;
     private String digits = "";
-    private long lastBackPress;
+    /** Перестановка каналов: позиция переставляемого канала или -1. */
+    private int moving = -1;
 
     private final Runnable hideInfo = () -> info.setVisibility(View.GONE);
     private final Runnable applyDigits = () -> {
         int number = Integer.parseInt(digits);
         digits = "";
-        if (number >= 1 && number <= channels.length) {
+        if (number >= 1 && number <= channels.size()) {
             play(number - 1);
         } else {
             showInfo("Нет канала с номером " + number, 2000);
+        }
+    };
+    /** Раз в минуту обновляем «что идёт сейчас» в открытом списке. */
+    private final Runnable tick = new Runnable() {
+        @Override
+        public void run() {
+            if (panel.getVisibility() == View.VISIBLE) {
+                adapter.notifyDataSetChanged();
+            }
+            handler.postDelayed(this, 60 * 1000);
+        }
+    };
+    private final Runnable refreshEpg = new Runnable() {
+        @Override
+        public void run() {
+            fetchEpg();
+            handler.postDelayed(this, EPG_REFRESH_MS);
         }
     };
 
@@ -96,14 +123,20 @@ public class MainActivity extends Activity {
         panel = findViewById(R.id.panel);
         list = findViewById(R.id.list);
         info = findViewById(R.id.info);
+        hint = findViewById(R.id.hint);
         prefs = getSharedPreferences("settings", MODE_PRIVATE);
+        logos = new LogoLoader(this, SERVER);
 
         loadChannels();
-        adapter = new ArrayAdapter<>(this, R.layout.item_channel, channelNames());
+        adapter = new ChannelAdapter(getLayoutInflater(), logos, channels);
         list.setAdapter(adapter);
         list.setOnItemClickListener((parent, view, position, id) -> {
             play(position);
             hideList();
+        });
+        list.setOnItemLongClickListener((parent, view, position, id) -> {
+            startMoving(position);
+            return true;
         });
         findViewById(R.id.update).setOnClickListener(v -> checkUpdates(true));
 
@@ -120,7 +153,7 @@ public class MainActivity extends Activity {
             public void onPlaybackStateChanged(int state) {
                 if (state == Player.STATE_READY && titleShown) {
                     handler.removeCallbacks(hideInfo);
-                    handler.postDelayed(hideInfo, 3000);
+                    handler.postDelayed(hideInfo, 4000);
                 }
             }
 
@@ -132,14 +165,21 @@ public class MainActivity extends Activity {
                     player.prepare();
                     return;
                 }
+                Log.w(TAG, "Не воспроизводится " + channels.get(current).name, error);
                 showInfo(channelTitle(current) + "\nКанал сейчас недоступен. Выберите другой.", 0);
             }
         });
         PlayerView playerView = findViewById(R.id.player);
         playerView.setPlayer(player);
 
-        current = Math.min(prefs.getInt("channel", 0), channels.length - 1);
+        current = indexOfId(prefs.getString(CURRENT_CHANNEL, null));
+        if (current < 0 || channels.get(current).isWebPage()) {
+            current = nextPlayable(-1, 1);
+        }
+        loadCachedEpg();
         showList();
+        handler.post(tick);
+        handler.post(refreshEpg);
         // При запуске: продолжаем обновление, если ради него выдали разрешение,
         // иначе тихо берём свежий список каналов и подсказываем, если вышла новая версия
         checkUpdates(resumeUpdateAfterPermission());
@@ -179,15 +219,30 @@ public class MainActivity extends Activity {
         super.onDestroy();
         handler.removeCallbacksAndMessages(null);
         io.shutdownNow();
+        logos.shutdown();
         player.release();
     }
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
+        int key = event.getKeyCode();
+        if (moving >= 0) {
+            // Перестановка: стрелки двигают канал, OK или «Назад» — готово
+            if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                if (key == KeyEvent.KEYCODE_DPAD_UP) {
+                    moveBy(-1);
+                } else if (key == KeyEvent.KEYCODE_DPAD_DOWN) {
+                    moveBy(1);
+                } else if ((key == KeyEvent.KEYCODE_DPAD_CENTER || key == KeyEvent.KEYCODE_ENTER
+                        || key == KeyEvent.KEYCODE_BACK) && event.getRepeatCount() == 0) {
+                    stopMoving();
+                }
+            }
+            return true;
+        }
         if (event.getAction() != KeyEvent.ACTION_DOWN) {
             return super.dispatchKeyEvent(event);
         }
-        int key = event.getKeyCode();
 
         if (key >= KeyEvent.KEYCODE_0 && key <= KeyEvent.KEYCODE_9) {
             if (digits.length() < 3) {
@@ -195,15 +250,15 @@ public class MainActivity extends Activity {
             }
             showInfo("Канал " + digits, 0);
             handler.removeCallbacks(applyDigits);
-            handler.postDelayed(applyDigits, 1500);
+            handler.postDelayed(applyDigits, 2000);
             return true;
         }
         if (key == KeyEvent.KEYCODE_CHANNEL_UP) {
-            play(current + 1);
+            play(nextPlayable(current, 1));
             return true;
         }
         if (key == KeyEvent.KEYCODE_CHANNEL_DOWN) {
-            play(current - 1);
+            play(nextPlayable(current, -1));
             return true;
         }
 
@@ -218,25 +273,17 @@ public class MainActivity extends Activity {
 
         switch (key) {
             case KeyEvent.KEYCODE_DPAD_UP:
-                play(current - 1);
+                play(nextPlayable(current, -1));
                 return true;
             case KeyEvent.KEYCODE_DPAD_DOWN:
-                play(current + 1);
+                play(nextPlayable(current, 1));
                 return true;
+            case KeyEvent.KEYCODE_BACK:
             case KeyEvent.KEYCODE_DPAD_CENTER:
             case KeyEvent.KEYCODE_ENTER:
             case KeyEvent.KEYCODE_DPAD_LEFT:
             case KeyEvent.KEYCODE_MENU:
                 showList();
-                return true;
-            case KeyEvent.KEYCODE_BACK:
-                long now = System.currentTimeMillis();
-                if (now - lastBackPress < 2500) {
-                    finish();
-                } else {
-                    lastBackPress = now;
-                    showInfo("Нажмите «Назад» ещё раз, чтобы выйти", 2500);
-                }
                 return true;
             default:
                 return super.dispatchKeyEvent(event);
@@ -244,20 +291,49 @@ public class MainActivity extends Activity {
     }
 
     private void play(int index) {
-        int count = channels.length;
-        current = (index % count + count) % count;
-        prefs.edit().putInt("channel", current).apply();
+        Channel channel = channels.get(index);
+        if (channel.isWebPage()) {
+            // Открытого потока нет — показываем официальную страницу канала, текущий канал не меняем
+            startActivity(new Intent(this, WebActivity.class)
+                    .putExtra(WebActivity.EXTRA_URL, channel.page)
+                    .putExtra(WebActivity.EXTRA_PLAYER, channel.player));
+            return;
+        }
+        current = index;
+        prefs.edit().putString(CURRENT_CHANNEL, channel.id).apply();
         list.setItemChecked(current, true);
+        if (panel.getVisibility() == View.VISIBLE && list.getSelectedItemPosition() != current) {
+            list.setSelection(current);
+        }
 
-        player.setMediaItem(MediaItem.fromUri(channels[current][1]));
+        player.setMediaItem(MediaItem.fromUri(channel.url));
         player.prepare();
         player.play();
-        showInfo(channelTitle(current), 0);
+        showChannelInfo();
+    }
+
+    /** Следующий канал с видеопотоком в направлении step; страницы при листании пропускаем. */
+    private int nextPlayable(int from, int step) {
+        int count = channels.size();
+        int index = from;
+        for (int i = 0; i < count; i++) {
+            index = ((index + step) % count + count) % count;
+            if (!channels.get(index).isWebPage()) {
+                return index;
+            }
+        }
+        return Math.max(from, 0);
+    }
+
+    private void showChannelInfo() {
+        String now = epg.nowPlaying(channels.get(current).epg, System.currentTimeMillis());
+        showInfo(channelTitle(current) + (now == null ? "" : "\nСейчас: " + now), 0);
         titleShown = true;
     }
 
     private void showList() {
         panel.setVisibility(View.VISIBLE);
+        adapter.notifyDataSetChanged();
         list.setItemChecked(current, true);
         list.setSelection(current);
         list.requestFocus();
@@ -279,15 +355,74 @@ public class MainActivity extends Activity {
     }
 
     private String channelTitle(int index) {
-        return (index + 1) + ". " + channels[index][0];
+        return (index + 1) + ". " + channels.get(index).name;
     }
 
-    private List<String> channelNames() {
-        List<String> names = new ArrayList<>();
-        for (int i = 0; i < channels.length; i++) {
-            names.add((i + 1) + ".  " + channels[i][0]);
+    // ---------- Перестановка каналов ----------
+
+    private void startMoving(int position) {
+        moving = position;
+        adapter.setMoving(position);
+        hint.setText(R.string.hint_moving);
+    }
+
+    private void moveBy(int step) {
+        int target = moving + step;
+        if (target < 0 || target >= channels.size()) {
+            return;
         }
-        return names;
+        String playing = channels.get(current).id;
+        Collections.swap(channels, moving, target);
+        moving = target;
+        current = indexOfId(playing);
+        adapter.setMoving(moving);
+        list.setItemChecked(current, true);
+        list.setSelection(moving);
+    }
+
+    private void stopMoving() {
+        moving = -1;
+        adapter.setMoving(-1);
+        hint.setText(R.string.hint_list);
+        JSONArray order = new JSONArray();
+        for (Channel channel : channels) {
+            order.put(channel.id);
+        }
+        prefs.edit().putString(ORDER, order.toString()).apply();
+        showInfo("Порядок каналов сохранён", 2000);
+    }
+
+    /** Расставляет каналы в сохранённом порядке; новые каналы — в конец. */
+    private List<Channel> applyOrder(List<Channel> fresh) {
+        List<Channel> ordered = new ArrayList<>();
+        try {
+            JSONArray order = new JSONArray(prefs.getString(ORDER, "[]"));
+            for (int i = 0; i < order.length(); i++) {
+                for (Channel channel : fresh) {
+                    if (channel.id.equals(order.getString(i))) {
+                        ordered.add(channel);
+                        break;
+                    }
+                }
+            }
+        } catch (JSONException ignored) {
+            // Порядок испорчен — оставляем как на сервере
+        }
+        for (Channel channel : fresh) {
+            if (!ordered.contains(channel)) {
+                ordered.add(channel);
+            }
+        }
+        return ordered;
+    }
+
+    private int indexOfId(String id) {
+        for (int i = 0; i < channels.size(); i++) {
+            if (channels.get(i).id.equals(id)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     // ---------- Список каналов ----------
@@ -298,64 +433,82 @@ public class MainActivity extends Activity {
         if (cached.exists()) {
             try (InputStream in = new FileInputStream(cached)) {
                 String json = readText(in);
-                channels = parseChannels(json);
+                channels = applyOrder(Channel.parse(json));
                 channelsJson = json;
                 return;
             } catch (IOException | JSONException ignored) {
-                // Файл испорчен — берём встроенный список
+                // Файл испорчен или от старой версии — берём встроенный список
             }
         }
         try (InputStream in = getAssets().open(CHANNELS_FILE)) {
             channelsJson = readText(in);
-            channels = parseChannels(channelsJson);
+            channels = applyOrder(Channel.parse(channelsJson));
         } catch (IOException | JSONException e) {
             throw new IllegalStateException("Встроенный список каналов повреждён", e);
         }
     }
 
     /** Применяет новый список, стараясь не прерывать канал, который сейчас идёт. */
-    private void applyChannels(String json, String[][] fresh) {
-        try (OutputStream out = new FileOutputStream(new File(getFilesDir(), CHANNELS_FILE))) {
-            out.write(json.getBytes("UTF-8"));
-        } catch (IOException ignored) {
-            // Не сохранилось — список всё равно применится до перезапуска
-        }
-        String[] playing = channels[current];
-        channels = fresh;
+    private void applyChannels(String json, List<Channel> fresh) {
+        writeText(new File(getFilesDir(), CHANNELS_FILE), json);
+        Channel playing = channels.get(current);
+        channels = applyOrder(fresh);
         channelsJson = json;
-        adapter.clear();
-        adapter.addAll(channelNames());
+        adapter.setChannels(channels);
 
-        int index = indexOf(playing[1], 1);
-        if (index >= 0) {
+        int index = indexOfId(playing.id);
+        if (index >= 0 && !channels.get(index).isWebPage()) {
             current = index;
             list.setItemChecked(current, true);
-        } else {
-            // Адрес канала поменяли (например, починили) — переключаемся на новый
-            play(Math.max(indexOf(playing[0], 0), 0));
-        }
-    }
-
-    private int indexOf(String value, int field) {
-        for (int i = 0; i < channels.length; i++) {
-            if (channels[i][field].equals(value)) {
-                return i;
+            if (!channels.get(index).url.equals(playing.url)) {
+                // Адрес канала поменяли (например, починили) — переключаемся на новый
+                play(index);
             }
+        } else {
+            play(nextPlayable(-1, 1));
         }
-        return -1;
     }
 
-    private static String[][] parseChannels(String json) throws JSONException {
-        JSONArray array = new JSONArray(json);
-        if (array.length() == 0) {
-            throw new JSONException("Пустой список каналов");
+    // ---------- Телепрограмма ----------
+
+    private void loadCachedEpg() {
+        File cached = new File(getFilesDir(), EPG_FILE);
+        if (!cached.exists()) {
+            return;
         }
-        String[][] result = new String[array.length()][];
-        for (int i = 0; i < array.length(); i++) {
-            JSONObject item = array.getJSONObject(i);
-            result[i] = new String[]{item.getString("name"), item.getString("url")};
+        try (InputStream in = new FileInputStream(cached)) {
+            epg = Epg.parse(readText(in));
+            adapter.setEpg(epg);
+        } catch (IOException | JSONException ignored) {
+            // Испорченный файл заменится свежим с сервера
         }
-        return result;
+    }
+
+    private void fetchEpg() {
+        io.execute(() -> {
+            String json = fetchOrNull(SERVER + EPG_FILE);
+            if (json == null) {
+                return;
+            }
+            try {
+                Epg fresh = Epg.parse(json);
+                writeText(new File(getFilesDir(), EPG_FILE), json);
+                runOnUiThread(() -> {
+                    epg = fresh;
+                    adapter.setEpg(fresh);
+                });
+            } catch (JSONException e) {
+                Log.w(TAG, "Испорченная телепрограмма", e);
+            }
+        });
+    }
+
+    private static void writeText(File file, String text) {
+        try (OutputStream out = new FileOutputStream(file)) {
+            out.write(text.getBytes("UTF-8"));
+        } catch (IOException ignored) {
+            // Не сохранилось — данные всё равно используются до перезапуска
+        }
     }
 
     // ---------- Обновления ----------
@@ -378,7 +531,7 @@ public class MainActivity extends Activity {
         }
         if (json != null && !json.equals(channelsJson)) {
             try {
-                applyChannels(json, parseChannels(json));
+                applyChannels(json, Channel.parse(json));
             } catch (JSONException ignored) {
                 // На сервере испорченный список — оставляем текущий
             }
@@ -408,7 +561,7 @@ public class MainActivity extends Activity {
             if (json == null && version == null) {
                 showInfo("Сервер обновлений недоступен. Попробуйте позже.", 5000);
             } else {
-                showInfo("Всё обновлено. Каналов: " + channels.length
+                showInfo("Всё обновлено. Каналов: " + channels.size()
                         + ". Версия " + BuildConfig.VERSION_NAME + " — последняя.", 5000);
             }
         }

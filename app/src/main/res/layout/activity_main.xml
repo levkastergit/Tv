@@ -15,7 +15,7 @@
 
     <LinearLayout
         android:id="@+id/panel"
-        android:layout_width="400dp"
+        android:layout_width="520dp"
         android:layout_height="match_parent"
         android:background="#E6101418"
         android:orientation="vertical"
@@ -33,10 +33,11 @@
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/hint"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="OK — смотреть, «Назад» — скрыть список"
+            android:text="@string/hint_list"
             android:textColor="#99FFFFFF"
             android:textSize="14sp" />
 
@@ -74,7 +75,7 @@
         android:layout_marginTop="32dp"
         android:layout_marginEnd="48dp"
         android:background="#CC000000"
-        android:maxWidth="480dp"
+        android:maxWidth="380dp"
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
         android:paddingTop="12dp"
