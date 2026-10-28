@@ -1,5 +1,12 @@
 [
   {
+    "id": "ChannelOne.ru",
+    "name": "Первый канал",
+    "rutube": "c58f502c7bb34a8fcdd976b221fca292",
+    "logo": "logos/channeloneru.png",
+    "epg": "pervy"
+  },
+  {
     "id": "Russia1.ru",
     "name": "Россия 1",
     "url": "https://live.smotrim.ru/vgtrk/0/russia1-hd/index.m3u8",

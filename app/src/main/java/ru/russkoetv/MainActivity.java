@@ -54,6 +54,12 @@ public class MainActivity extends Activity {
     private static final String TAG = "RusskoeTV";
     private static final String USER_AGENT =
             "Mozilla/5.0 (Linux; Android 12; Android TV) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36";
+    /**
+     * Для API RUTUBE представляемся браузером на ПК: часть каналов (например, Первый) не отдаёт эфир
+     * телевизорам, а компьютерам отдаёт. Сам поток после этого качается как обычно.
+     */
+    private static final String DESKTOP_USER_AGENT =
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
     private static final String SERVER = BuildConfig.UPDATE_SERVER;
     private static final String CHANNELS_FILE = "channels.json";
     private static final String EPG_FILE = "epg.json";
@@ -355,7 +361,7 @@ public class MainActivity extends Activity {
 
     /** Ссылка на прямой эфир видео RUTUBE или null, если RUTUBE его не отдал (например, вне России). */
     private static String resolveRutube(String videoId) {
-        String json = fetchOrNull("https://rutube.ru/api/play/options/" + videoId + "/?no_404=true");
+        String json = fetchOrNull("https://rutube.ru/api/play/options/" + videoId + "/?no_404=true", DESKTOP_USER_AGENT);
         if (json == null) {
             return null;
         }
@@ -690,9 +696,13 @@ public class MainActivity extends Activity {
     // ---------- Сеть ----------
 
     private static String fetchOrNull(String url) {
+        return fetchOrNull(url, USER_AGENT);
+    }
+
+    private static String fetchOrNull(String url, String userAgent) {
         try {
             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-            HttpURLConnection connection = open(url);
+            HttpURLConnection connection = open(url, userAgent);
             try (InputStream in = connection.getInputStream()) {
                 copy(in, buffer);
             } finally {
@@ -710,7 +720,7 @@ public class MainActivity extends Activity {
         IOException failure = null;
         for (int attempt = 1; attempt <= 5; attempt++) {
             try {
-                HttpURLConnection connection = open(url);
+                HttpURLConnection connection = open(url, USER_AGENT);
                 try (InputStream in = connection.getInputStream(); OutputStream out = new FileOutputStream(target)) {
                     copy(in, out);
                     return;
@@ -725,12 +735,12 @@ public class MainActivity extends Activity {
         throw failure;
     }
 
-    private static HttpURLConnection open(String url) throws IOException {
+    private static HttpURLConnection open(String url, String userAgent) throws IOException {
         HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
         connection.setConnectTimeout(15000);
         connection.setReadTimeout(30000);
         connection.setUseCaches(false);
-        connection.setRequestProperty("User-Agent", USER_AGENT);
+        connection.setRequestProperty("User-Agent", userAgent);
         int code = connection.getResponseCode();
         if (code != HttpURLConnection.HTTP_OK) {
             connection.disconnect();

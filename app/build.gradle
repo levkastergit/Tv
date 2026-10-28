@@ -11,8 +11,8 @@ android {
         minSdk 21
         targetSdk 34
         // При каждом выпуске обновления увеличивать versionCode на 1
-        versionCode 3
-        versionName '1.2'
+        versionCode 4
+        versionName '1.3'
         // Откуда приложение берёт обновления и список каналов (для проверки: gradle -PupdateServer=http://...)
         def updateServer = project.findProperty('updateServer') ?: 'http://82.23.163.205:40100/'
         buildConfigField 'String', 'UPDATE_SERVER', "\"${updateServer}\""
